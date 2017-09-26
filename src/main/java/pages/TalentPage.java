@@ -1,6 +1,10 @@
 package pages;
 
 
+import com.github.javafaker.Faker;
+import fabricator.Fabricator;
+import fabricator.enums.DateFormat;
+import fabricator.enums.DateRangeType;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
@@ -13,6 +17,8 @@ import static testResources.XlsData.*;
 
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
 import static java.lang.Thread.sleep;
 
 public class TalentPage {
@@ -20,6 +26,8 @@ public class TalentPage {
     WebDriverWait wait;
     public Random rand=new Random();
     JavascriptExecutor ex;
+    Fabricator fabricator;
+    Faker fake= new Faker();
     public TalentPage(WebDriver driver) {
         this.driver=driver;
         wait = new WebDriverWait(driver,5);
@@ -77,7 +85,7 @@ public class TalentPage {
     WebElement advancedRadio;
     @FindBy(xpath = "//label[contains(text(),'Family')]//input")
     WebElement familyRadio;
-    @FindBy(xpath = "//textarea[@name='testimony0']")
+    @FindBy(xpath = "//textarea[@name='testimonyTextFieldFamily0']")
     WebElement testimonyField;
     @FindBy(xpath = "//input[@name='workProduct']")
     WebElement workProduct;
@@ -161,10 +169,10 @@ public class TalentPage {
         training.selectByIndex(i);
     }
     public void enterWeight(){
-        weightField.sendKeys(RandomStringUtils.randomNumeric(2,3));
+        weightField.sendKeys(String.valueOf(fabricator.alphaNumeric().randomInt(10,250)));
     }
     public void enterHeight() throws Exception {
-        String height=RandomStringUtils.randomNumeric(2,3);
+        String height= String.valueOf(fabricator.alphaNumeric().randomInt(40,250));
         heightField.sendKeys(height);
         setCellData(height,1,findColumn("Height"));
     }
@@ -176,17 +184,18 @@ public class TalentPage {
     }
 
     public void enterPlaceBirth()throws Exception {
-        String birthPlace=RandomStringUtils.randomAlphabetic(5,7);
+        String birthPlace=fake.address().country();
         placeBirthField.sendKeys(birthPlace);
         setCellData(birthPlace,1,findColumn("Birth Place"));
     }
-    public void enterBirth(String dateBirth) throws Exception {
-        birthField.sendKeys(dateBirth);
-        dateBirth=dateBirth.substring(0,2)+"/"+dateBirth.substring(2,4)+"/"+dateBirth.substring(4);
+    public void enterBirth(int year) throws Exception {
+        String dateBirth= fabricator.contact().birthday(year, DateFormat.dd_MM_YYYY_BACKSLASH);
+        birthField.sendKeys(fabricator.contact().birthday(year, DateFormat.dd_MM_YYYY_BACKSLASH));
+        //dateBirth=dateBirth.substring(0,2)+"/"+dateBirth.substring(2,4)+"/"+dateBirth.substring(4);
         setCellData(dateBirth,1,findColumn("Birth Date"));
     }
-    public void enterEmail(){
-        emailField.sendKeys(RandomStringUtils.randomAlphanumeric(7)+"@getnada.com");
+    public void enterEmail(String otherEmail){
+        emailField.sendKeys(otherEmail);
     }
 
     public void enterAddress(String address){
@@ -350,6 +359,10 @@ public class TalentPage {
     public String actualWorkStatus() {
         Select workStatusList=new Select(selectWorkStatus);
         return workStatusList.getFirstSelectedOption().getAttribute("value");
+    }
+
+    public String getLName() {
+        return lNameField.getAttribute("value");
     }
 
 

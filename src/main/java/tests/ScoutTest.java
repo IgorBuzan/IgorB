@@ -39,10 +39,11 @@ public class ScoutTest extends BaseTest {
         pageResources.getTalentPage().enterName(firstName,middleName,lastName);//Personal
         pageResources.getTalentPage().enterAddress(address);
         pageResources.getTalentPage().enterPhone(phone);
-        pageResources.getTalentPage().enterEmail();
-        String birth =pageResources.getTalentPage().randomDate();
-        int year = Integer.parseInt(birth.substring(4));
-        pageResources.getTalentPage().enterBirth(birth);
+        pageResources.getTalentPage().enterEmail(email);
+        //String birth =pageResources.getTalentPage().randomDate();
+        //int year = Integer.parseInt(birth.substring(4));
+        int year=fabricator.alphaNumeric().randomInt(100);
+        pageResources.getTalentPage().enterBirth(year);
         pageResources.getTalentPage().enterPlaceBirth();
         pageResources.getTalentPage().ruralRadioClick();
         pageResources.getTalentPage().priviligedRadioClick();
