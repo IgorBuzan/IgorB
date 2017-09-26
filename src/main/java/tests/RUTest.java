@@ -3,7 +3,6 @@ package tests;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.hellojavaer.poi.excel.utils.ExcelUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -44,9 +43,9 @@ public class RUTest extends BaseTest{
            pageResources.getRegPage().killCover();
             pageResources.getRegPage().pushRegisterNow();
        }
-        XlsData.setExcelFile(Path_TestData + File_TestData, "LoginRO");
+        XlsData.setExcelFile(Path_TestData + File_TestData, "LoginRU");
         XlsData.setUpTable(new String[]{"First Name", "Middle Name", "Last Name", "Country", "Address", "Phone", "Email", "Password",
-                "Birth Date", "Birth Place","Height","Marital","Work Status","Other First Name","Other Middle Name","Other Last Name"});//Setting up columns of Excel file for data
+                "Birth Date", "Birth Place","Height","Marital","Work Status"});//Setting up columns of Excel file for data
         System.out.println(XlsData.findColumn("Country"));
         pageResources.getRegPage().inputNames(firstName, middleName, lastName);//REgistration starts
         XlsData.setCellData(firstName, 1, findColumn("First Name"));
@@ -57,7 +56,8 @@ public class RUTest extends BaseTest{
         pageResources.getRegPage().inputAddress(address);
         XlsData.setCellData(address, 1, findColumn("Address"));
         pageResources.getRegPage().inputPhone(phone);
-        XlsData.setCellData("(" + phone.substring(0, 3) + ") " + phone.substring(3, 6) + "-" + phone.substring(6, 10), 1, findColumn("Phone"));
+        System.out.println(phone);
+        XlsData.setCellData(phone, 1, findColumn("Phone"));
         pageResources.getRegPage().inputEmail(email);
         XlsData.setCellData(email, 1, findColumn("Email"));
         pageResources.getRegPage().inputPassword(password);
@@ -88,9 +88,10 @@ public class RUTest extends BaseTest{
         pageResources.getTalentPage().pushConfirm();
         pageResources.getTalentPage().selectCategory();//Category
         pageResources.getTalentPage().pushNextButton();//Personal
-        String birth =pageResources.getTalentPage().randomDate();
-        int year = Integer.parseInt(birth.substring(4));
-        pageResources.getTalentPage().enterBirth(birth);
+        //String birth =pageResources.getTalentPage().randomDate();
+        //int year = Integer.parseInt(birth.substring(4));
+        int year=fabricator.alphaNumeric().randomInt(100);
+        pageResources.getTalentPage().enterBirth(year);
         pageResources.getTalentPage().enterPlaceBirth();
         pageResources.getTalentPage().ruralRadioClick();
         pageResources.getTalentPage().priviligedRadioClick();
@@ -139,6 +140,11 @@ public class RUTest extends BaseTest{
         System.out.println(actualMName);
         try {assertTrue(actualMName.matches(getCellData(1,findColumn("Middle Name"))));}
         catch (AssertionError e) {System.out.println("Middle Name does not match!");}
+        String actualLName=pageResources.getTalentPage().getLName();
+        System.out.println(getCellData(1,findColumn("Last Name")));
+        System.out.println(actualLName);
+        try {assertTrue(actualLName.matches(getCellData(1,findColumn("Last Name"))));}
+        catch (AssertionError e) {System.out.println("Last Name does not match!");}
         String actualBirthDate=pageResources.getTalentPage().getBirthDate();
         System.out.println(getCellData(1,findColumn("Birth Date")));
         System.out.println(actualBirthDate);

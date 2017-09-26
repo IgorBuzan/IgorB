@@ -79,8 +79,14 @@ public class XlsData {
         int i;
         try {
             i = 0;
-            while (!category.matches(getCellData(0, i))) {
+            if (category.contains("Other")){
+                while (!category.matches(getCellData(2, i))) {
                 i++;
+                }
+            } else {
+                while (!category.matches(getCellData(0, i))) {
+                    i++;
+                }
             }
 
         } catch (Exception e) {

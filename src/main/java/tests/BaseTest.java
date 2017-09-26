@@ -1,5 +1,6 @@
 package tests;
 
+import fabricator.Fabricator;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -20,6 +21,7 @@ public class BaseTest {
     //Superclass for tests that declared most of the variables;
     protected WebDriver driver;
     protected WebDriverWait wait;
+    Fabricator fabricator;
     protected String baseUrl = "http://ec2-52-53-181-39.us-west-1.compute.amazonaws.com";
     //String talentUrl = "http://ec2-52-53-181-39.us-west-1.compute.amazonaws.com/talents.html";
     public static final String USERNAME = "Homer01";

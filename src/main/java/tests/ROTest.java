@@ -7,12 +7,11 @@ import testResources.XlsData;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static testResources.XlsData.findColumn;
-import static testResources.XlsData.getCellData;
+import static testResources.XlsData.*;
 
 public class ROTest extends BaseTest{
 
-    @Test(dataProviderClass = DataResources.class,dataProvider= "LoginRO_TestDataProvider",enabled=true,description="LoginRegularO")
+    @Test(dataProviderClass = DataResources.class,dataProvider= "LoginROLogin_TestDataProvider",enabled=true,description="LoginRegularO")
     public void LoginRO(String email,String password,String firstName,String middleName,String lastName, String country, String address,String phone) throws Exception {
         //End-to-end test case that checks the followind:
         //Verifying that user is able to register an account with valid credentials
@@ -31,9 +30,10 @@ public class ROTest extends BaseTest{
             pageResources.getRegPage().killCover();
             pageResources.getRegPage().pushRegisterNow();
         }
+        XlsData.setExcelFile(Path_TestData + File_TestData, "LoginRO");
         XlsData.setUpTable(new String[]{"First Name", "Middle Name", "Last Name", "Country", "Address", "Phone", "Email", "Password",
                 "Birth Date", "Birth Place","Height","Marital","Work Status","Other First Name","Other Middle Name","Other Last Name",
-        "Other "});//Setting up columns of Excel file for data
+        "Other Address","Other Phone","Other Email"});//Setting up columns of Excel file for data
         System.out.println(XlsData.findColumn("Country"));
         pageResources.getRegPage().inputNames(firstName, middleName, lastName);//REgistration starts
         XlsData.setCellData(firstName, 1, findColumn("First Name"));
@@ -60,21 +60,29 @@ public class ROTest extends BaseTest{
         pageResources.getLoginPage().enterPassword(password);
         pageResources.getLoginPage().pushLoginButton();//Login
     }
-        @Test(priority = 1)
-            public void tallentRO() throws Exception {
+        @Test(priority = 1,dataProviderClass = DataResources.class,dataProvider= "LoginROTallent_TestDataProvider")
+            public void tallentRO(String otherFirstName,String otherMiddleName,String otherLastName,
+                                  String otherAddress,String otherPhone,String otherEmail) throws Exception {
         pageResources.getTalentPage().pushOtherButton();
         Thread.sleep(1000);
         pageResources.getTalentPage().pushConfirm();
         pageResources.getTalentPage().pushNewButton();
         pageResources.getTalentPage().selectCategory();//Category
         pageResources.getTalentPage().pushNextButton();
-       // pageResources.getTalentPage().enterName(firstName,middleName,lastName);//Personal
-       // pageResources.getTalentPage().enterAddress(address);
-        //pageResources.getTalentPage().enterPhone(phone);
-        pageResources.getTalentPage().enterEmail();
-        String birth =pageResources.getTalentPage().randomDate();
-        int year = Integer.parseInt(birth.substring(4));
-        pageResources.getTalentPage().enterBirth(birth);
+        pageResources.getTalentPage().enterName(otherFirstName,otherMiddleName,otherLastName);//Personal
+            XlsData.setCellData(otherFirstName, 3, findColumn("Other First Name"));
+            XlsData.setCellData(otherMiddleName, 3, findColumn("Other Middle Name"));
+            XlsData.setCellData(otherLastName, 3, findColumn("Other Last Name"));
+        pageResources.getTalentPage().enterAddress(otherAddress);
+            XlsData.setCellData(otherAddress, 3, findColumn("Other Address"));
+        pageResources.getTalentPage().enterPhone(otherPhone);
+            XlsData.setCellData(otherPhone, 3, findColumn("Other Phone"));
+        pageResources.getTalentPage().enterEmail(otherEmail);
+            XlsData.setCellData(otherEmail, 3, findColumn("Other Email"));
+//        String birth =pageResources.getTalentPage().randomDate();
+//        int year = Integer.parseInt(birth.substring(4))
+        int year=fabricator.alphaNumeric().randomInt(100);
+        pageResources.getTalentPage().enterBirth(year);
         pageResources.getTalentPage().enterPlaceBirth();
         pageResources.getTalentPage().ruralRadioClick();
         pageResources.getTalentPage().priviligedRadioClick();
@@ -114,15 +122,20 @@ public class ROTest extends BaseTest{
 //        pageResources.getTalentPage().checkCategory();//Category
         pageResources.getTalentPage().pushNextButton();//Personal
         String actualFName=pageResources.getTalentPage().getFName();
-        System.out.println(getCellData(1,findColumn("First Name")));
+        System.out.println(getCellData(3,findColumn("Other First Name")));
         System.out.println(actualFName);
-        try {assertTrue(actualFName.matches(getCellData(1,findColumn("First Name"))));}
+        try {assertTrue(actualFName.matches(getCellData(3,findColumn("Other First Name"))));}
         catch (AssertionError e) {System.out.println("First Name does not match!");}
         String actualMName=pageResources.getTalentPage().getMName();
-        System.out.println(getCellData(1,findColumn("Middle Name")));
+        System.out.println(getCellData(3,findColumn("Other Middle Name")));
         System.out.println(actualMName);
-        try {assertTrue(actualMName.matches(getCellData(1,findColumn("Middle Name"))));}
+        try {assertTrue(actualMName.matches(getCellData(3,findColumn("Other Middle Name"))));}
         catch (AssertionError e) {System.out.println("Middle Name does not match!");}
+            String actualLName=pageResources.getTalentPage().getLName();
+            System.out.println("last name from table:"+getCellData(3,findColumn("Other Last Name")));
+            System.out.println("Last name on form:"+actualLName);
+            try {assertTrue(actualLName.matches(getCellData(3,findColumn("Other Last Name"))));}
+            catch (AssertionError e) {System.out.println("Last Name does not match!");}
         String actualBirthDate=pageResources.getTalentPage().getBirthDate();
         System.out.println(getCellData(1,findColumn("Birth Date")));
         System.out.println(actualBirthDate);
